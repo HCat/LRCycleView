@@ -18,16 +18,9 @@
 
 @property (nonatomic,assign) BOOL scrollViewBounces;
 
-@property (nonatomic,copy) NSArray *arr_images;         //初始化的图片数组
 @property (nonatomic,assign) NSUInteger layoutCount;    //layout调用次数,用于调试用的
 
-/* 只创建3个视图来进行轮播 */
-@property (nonatomic,strong) UIImageView *imgV_left;       //左边视图
-@property (nonatomic,strong) UIImageView *imgV_middle;     //中间视图
-@property (nonatomic,strong) UIImageView *imgV_right;      //右边视图
-
-
-
+@property (nonatomic,assign) NSUInteger currentIndex;   //当前索引页
 
 @end
 
@@ -44,8 +37,9 @@
         self.arr_images = imagesArray;
         self.scrollViewBounces = YES;
         self.isCanCycle = YES;
-        self.layoutCount = 0;
+        self.currentIndex = 0;
         
+        self.layoutCount = 0;
     }
     return self;
 }
@@ -56,6 +50,8 @@
     if (self) {
         self.scrollViewBounces = YES;
         self.isCanCycle = YES;
+        self.currentIndex = 0;
+        
         self.layoutCount = 0;
     }
     return self;
@@ -65,6 +61,8 @@
     if (self = [super initWithCoder:aDecoder]) {
         self.scrollViewBounces = YES;
         self.isCanCycle = YES;
+        self.currentIndex = 0;
+        
         self.layoutCount = 0;
     }
     return self;
@@ -81,11 +79,8 @@
     NSArray *subViews = self.subviews;
     [subViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
     
-//    [self initialize];
-//    
-//    if (self.completeBlock) {
-//        self.completeBlock();
-//    }
+    [self initialize];
+    
 }
 
 #pragma mark - 初始化内部视图
@@ -95,6 +90,7 @@
     [self createScrollView];
     [self createPageControl];
     
+    [self loadData];
     
     if (_autoPlayTimeInterval > 0) {
         
@@ -174,6 +170,7 @@
     NSAssert(_arr_images != nil, @"arr_images must not nil");
     
     if (_arr_images.count == 0) {
+        
         //如果数组为空的话，则显示无数据页面
         UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(_scrollView.frame), CGRectGetHeight(_scrollView.frame))];
         imageView.contentMode = UIViewContentModeScaleAspectFill;
@@ -184,9 +181,8 @@
         return;
     }
     
-    //对源图片数据进行数据拷贝，并且在收尾各添加数组收尾数据
     if (_isCanCycle) {
-        
+
         NSMutableArray *cycleDatasource = [_arr_images mutableCopy];
         [cycleDatasource insertObject:[_arr_images lastObject] atIndex:0];
         [cycleDatasource addObject:[_arr_images objectAtIndex:0]];
@@ -197,38 +193,33 @@
     CGFloat contentWidth = CGRectGetWidth(_scrollView.frame);
     CGFloat contentHeight = CGRectGetHeight(_scrollView.frame);
     
+    _scrollView.contentSize = CGSizeMake(contentWidth * _arr_images.count, contentHeight);
     
-    self.imgV_left = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, contentWidth, contentHeight)];
-    _imgV_left.contentMode = UIViewContentModeScaleAspectFill;
-    _imgV_left.backgroundColor = [UIColor clearColor];
+    for (NSUInteger i = 0 ; i < _arr_images.count; i++) {
+        
+        //添加UIImageView子视图
+        UIImageView * t_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(i *contentWidth, 0, contentWidth, contentHeight)];
+        t_imageView.backgroundColor = [UIColor clearColor];
+        
+        [self setImage:_arr_images[i] InImageView:t_imageView];
+        [_scrollView addSubview:t_imageView];
+        
+    }
     
-    self.imgV_middle = [[UIImageView alloc] initWithFrame:CGRectMake(contentWidth, 0, contentWidth, contentHeight)];
-    _imgV_middle.contentMode = UIViewContentModeScaleAspectFill;
-    _imgV_middle.backgroundColor = [UIColor clearColor];
-    
-    self.imgV_right = [[UIImageView alloc] initWithFrame:CGRectMake(contentWidth * 2, 0, contentWidth, contentHeight)];
-    _imgV_right.contentMode = UIViewContentModeScaleAspectFill;
-    _imgV_right.backgroundColor = [UIColor clearColor];
-    
-    [self setImage:_arr_images[0] InImageView:_imgV_left];
-    [self setImage:_arr_images[1] InImageView:_imgV_middle];
-    [self setImage:_arr_images[2] InImageView:_imgV_right];
-    
-    [_scrollView addSubview:_imgV_left];
-    [_scrollView addSubview:_imgV_middle];
-    [_scrollView addSubview:_imgV_middle];
-    
-    _scrollView.contentOffset = CGPointMake(contentWidth, 0);
-    
+
+    if (_isCanCycle && _arr_images.count > 1) {
+        _scrollView.contentOffset = CGPointMake(contentWidth, 0);
+    }
     
     //添加点击事件
-    
     UITapGestureRecognizer *tapGestureRecognize = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(singleTapGestureRecognizer:)];
     [tapGestureRecognize setDelegate:(id<UIGestureRecognizerDelegate> _Nullable)self];
     tapGestureRecognize.numberOfTapsRequired = 1;
     [_scrollView addGestureRecognizer:tapGestureRecognize];
     
 }
+
+#pragma mark - 设置图片给子视图UIImageView
 
 - (void)setImage:(id)imageSource InImageView:(UIImageView *)imageView{
 
@@ -238,16 +229,34 @@
         
     }else if ([imageSource isKindOfClass:[NSString class]] || [imageSource isKindOfClass:[NSURL class]]) {
       
-        [imageView sd_setImageWithURL:[imageSource isKindOfClass:[NSString class]] ? [NSURL URLWithString:imageSource] : imageSource placeholderImage:_image_placeHolder completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
-            
-            
-            
-        }];
+        NSURL *url_image = [imageSource isKindOfClass:[NSString class]] ? [NSURL URLWithString:imageSource] : imageSource;
+        
+        [imageView sd_setImageWithURL:url_image placeholderImage:_image_placeHolder];
         
     }
 
 
 }
+
+#pragma mark - UIScrollViewDelegate
+
+/* 即将要开始拖拽的时候，停止计时器 */
+-(void)scrollViewWillBeginDragging:(UIScrollView *)scrollView{
+    if (_timer) {
+         [self invalidateTimer];
+    }
+}
+
+/* 当结束拖拽的时候，开始计时器 */
+//4、已经结束拖拽，手指刚离开view的那一刻
+-(void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate{
+    
+    if ((self.isCanCycle && _arr_images.count > 3) || (!self.isCanCycle &&_arr_images.count > 2)) {
+        [self createTimer];
+    }
+
+}
+
 
 
 #pragma mark - UITapGestureRecognizerSelector
