@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CE4759171EFCBE8200E2B4E4 /* FLAnimatedImage.m in Sources */ = {isa = PBXBuildFile; fileRef = CE4759131EFCBE8200E2B4E4 /* FLAnimatedImage.m */; };
+		CE4759181EFCBE8200E2B4E4 /* FLAnimatedImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = CE4759151EFCBE8200E2B4E4 /* FLAnimatedImageView.m */; };
+		CE4759191EFCBE8200E2B4E4 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CE4759161EFCBE8200E2B4E4 /* Info.plist */; };
 		CE56D09D1EF8CE20005F2CB9 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CE56D09C1EF8CE20005F2CB9 /* main.m */; };
 		CE56D0A01EF8CE20005F2CB9 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CE56D09F1EF8CE20005F2CB9 /* AppDelegate.m */; };
 		CE56D0A31EF8CE20005F2CB9 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CE56D0A21EF8CE20005F2CB9 /* ViewController.m */; };
@@ -43,6 +46,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CE4759121EFCBE8200E2B4E4 /* FLAnimatedImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLAnimatedImage.h; sourceTree = "<group>"; };
+		CE4759131EFCBE8200E2B4E4 /* FLAnimatedImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FLAnimatedImage.m; sourceTree = "<group>"; };
+		CE4759141EFCBE8200E2B4E4 /* FLAnimatedImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLAnimatedImageView.h; sourceTree = "<group>"; };
+		CE4759151EFCBE8200E2B4E4 /* FLAnimatedImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FLAnimatedImageView.m; sourceTree = "<group>"; };
+		CE4759161EFCBE8200E2B4E4 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CE56D0981EF8CE20005F2CB9 /* LRCycleViewDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LRCycleViewDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE56D09C1EF8CE20005F2CB9 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		CE56D09E1EF8CE20005F2CB9 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -116,6 +124,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CE4759111EFCBE8200E2B4E4 /* FLAnimatedImage */ = {
+			isa = PBXGroup;
+			children = (
+				CE4759121EFCBE8200E2B4E4 /* FLAnimatedImage.h */,
+				CE4759131EFCBE8200E2B4E4 /* FLAnimatedImage.m */,
+				CE4759141EFCBE8200E2B4E4 /* FLAnimatedImageView.h */,
+				CE4759151EFCBE8200E2B4E4 /* FLAnimatedImageView.m */,
+				CE4759161EFCBE8200E2B4E4 /* Info.plist */,
+			);
+			path = FLAnimatedImage;
+			sourceTree = "<group>";
+		};
 		CE56D08F1EF8CE1F005F2CB9 = {
 			isa = PBXGroup;
 			children = (
@@ -136,6 +156,7 @@
 			isa = PBXGroup;
 			children = (
 				CE575AEC1EFA76F40062EAFC /* Resource */,
+				CE4759111EFCBE8200E2B4E4 /* FLAnimatedImage */,
 				CE575AAD1EFA72FD0062EAFC /* SDWebImage */,
 				CE56D0B21EF8CE49005F2CB9 /* LRCycleView */,
 				CE56D09E1EF8CE20005F2CB9 /* AppDelegate.h */,
@@ -300,6 +321,7 @@
 			files = (
 				CE575AF01EFA77130062EAFC /* img_0.jpg in Resources */,
 				CE56D0AB1EF8CE20005F2CB9 /* LaunchScreen.storyboard in Resources */,
+				CE4759191EFCBE8200E2B4E4 /* Info.plist in Resources */,
 				CE575AF21EFA77F40062EAFC /* img_2.jpg in Resources */,
 				CE575AF61EFA78280062EAFC /* img_4.jpg in Resources */,
 				CE56D0A81EF8CE20005F2CB9 /* Assets.xcassets in Resources */,
@@ -327,6 +349,7 @@
 				CE56D0A01EF8CE20005F2CB9 /* AppDelegate.m in Sources */,
 				CE575ADA1EFA72FD0062EAFC /* NSData+ImageContentType.m in Sources */,
 				CE575AE41EFA72FD0062EAFC /* UIButton+WebCache.m in Sources */,
+				CE4759181EFCBE8200E2B4E4 /* FLAnimatedImageView.m in Sources */,
 				CE575AE31EFA72FD0062EAFC /* SDWebImagePrefetcher.m in Sources */,
 				CE575AEB1EFA72FD0062EAFC /* UIView+WebCacheOperation.m in Sources */,
 				CE575AE11EFA72FD0062EAFC /* SDWebImageDownloaderOperation.m in Sources */,
@@ -338,6 +361,7 @@
 				CE575AD81EFA72FD0062EAFC /* FLAnimatedImageView+WebCache.m in Sources */,
 				CE575ADB1EFA72FD0062EAFC /* NSImage+WebCache.m in Sources */,
 				CE575AE51EFA72FD0062EAFC /* UIImage+GIF.m in Sources */,
+				CE4759171EFCBE8200E2B4E4 /* FLAnimatedImage.m in Sources */,
 				CE575AE01EFA72FD0062EAFC /* SDWebImageDownloader.m in Sources */,
 				CE575AE91EFA72FD0062EAFC /* UIImageView+WebCache.m in Sources */,
 				CE575ADC1EFA72FD0062EAFC /* SDImageCache.m in Sources */,

@@ -10,6 +10,9 @@
 #import "NSTimer+UnRetain.h"
 #import "UIImageView+WebCache.h"
 
+#define DEFINEAUTOPLAYTIME 3.0f
+
+
 @interface LRCyCleScrollView ()<UIScrollViewDelegate>
 
 @property (nonatomic,strong) UIScrollView * scrollView;
@@ -20,7 +23,8 @@
 
 @property (nonatomic,assign) NSUInteger layoutCount;    //layout调用次数,用于调试用的
 
-@property (nonatomic,assign) NSUInteger currentIndex;   //当前索引页
+@property (nonatomic,assign) NSInteger currentIndex;   //当前索引页
+@property (nonatomic,assign) NSInteger count;          //图片数据的数目
 
 @end
 
@@ -35,9 +39,8 @@
     
     if (self) {
         self.arr_images = imagesArray;
-        self.scrollViewBounces = YES;
         self.isCanCycle = YES;
-        self.currentIndex = 0;
+        self.autoPlayTimeInterval = DEFINEAUTOPLAYTIME;
         
         self.layoutCount = 0;
     }
@@ -47,11 +50,11 @@
 - (id)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
+    
     if (self) {
-        self.scrollViewBounces = YES;
         self.isCanCycle = YES;
-        self.currentIndex = 0;
-        
+        self.autoPlayTimeInterval = DEFINEAUTOPLAYTIME;
+       
         self.layoutCount = 0;
     }
     return self;
@@ -59,13 +62,25 @@
 
 - (id)initWithCoder:(NSCoder *)aDecoder {
     if (self = [super initWithCoder:aDecoder]) {
-        self.scrollViewBounces = YES;
         self.isCanCycle = YES;
-        self.currentIndex = 0;
-        
+        self.autoPlayTimeInterval = DEFINEAUTOPLAYTIME;
+    
         self.layoutCount = 0;
     }
     return self;
+}
+
+#pragma mark - set && get 
+
+- (void)setIsCanCycle:(BOOL)isCanCycle{
+
+    _isCanCycle = isCanCycle;
+    if (_isCanCycle) {
+        self.scrollViewBounces = YES;
+    }else{
+        self.scrollViewBounces = NO;
+    }
+
 }
 
 #pragma mark -
@@ -97,7 +112,7 @@
         //这里有两种条件来开始自动轮播，一种是循环播放，图片数量要大于3张；另外是不循环播放，图片数量大于2张
         
         if ((_isCanCycle && _arr_images.count > 3) || (!_isCanCycle && _arr_images.count > 2)) {
-            [self createTimer];
+            //[self createTimer];
         }
         
     }
@@ -125,10 +140,14 @@
 
 - (void)createPageControl{
     
+    _pageControl = [[UIPageControl alloc] initWithFrame:CGRectMake(0, 0, 13 *_arr_images.count, 25)];
+    _pageControl.center = CGPointMake(CGRectGetWidth(_scrollView.frame)/2, CGRectGetMaxY(_scrollView.frame) - CGRectGetHeight(_pageControl.frame)/2);
+    _pageControl.userInteractionEnabled = NO;
+    _pageControl.currentPageIndicatorTintColor = [UIColor redColor];
+    _pageControl.pageIndicatorTintColor = [UIColor whiteColor];
     
-    
-    
-    
+    [self addSubview:_pageControl];
+
 }
 
 #pragma mark - 定时器相关
@@ -146,7 +165,6 @@
     
     [[NSRunLoop currentRunLoop] addTimer:_timer forMode:NSRunLoopCommonModes];
 
-
 }
 
 //释放定时器
@@ -160,6 +178,38 @@
 
 - (void)timerAction{
 
+    /* 数组索引 */
+    NSInteger page = -1;
+    
+    CGFloat item_width = CGRectGetWidth(_scrollView.frame);
+    
+    /* 源图片数组索引,自增加 */
+    _currentIndex ++;
+    
+    if (_isCanCycle) {
+        
+        /* 循环轮播的时候, 变化后图片数组索引和源图片数组索引多增加一个单位，所以需要加1*/
+        page = _currentIndex + 1;
+    
+        /* 当自动跳转到最后最后一页的时候 */
+        if (page > _arr_images.count - 1) {
+            page = 1;
+            _currentIndex = 0;
+            [_scrollView setContentOffset:CGPointMake(item_width * page, 0) animated:YES];
+            
+        }else{
+    
+            [_scrollView setContentOffset:CGPointMake(item_width * page, 0) animated:YES];
+        }
+    
+    }else{
+        
+        page = _currentIndex ;
+        
+        [_scrollView setContentOffset:CGPointMake(item_width * page, 0) animated:YES];
+    }
+    
+    [self scrollViewDidScroll:_scrollView];
 
 }
 
@@ -171,7 +221,7 @@
     
     if (_arr_images.count == 0) {
         
-        //如果数组为空的话，则显示无数据页面
+        /*如果数组为空的话，则显示无数据页面*/
         UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(_scrollView.frame), CGRectGetHeight(_scrollView.frame))];
         imageView.contentMode = UIViewContentModeScaleAspectFill;
         imageView.backgroundColor = [UIColor clearColor];
@@ -181,12 +231,24 @@
         return;
     }
     
+    /* 设置pageControl显示 */
+    _pageControl.numberOfPages = _arr_images.count;
+    _pageControl.currentPage = 0;
+    self.currentIndex = 0;
+   
+    /*当数组只有一个元素的时候设置不进行循环滚动了*/
+    if (_arr_images.count == 1) {
+        self.isCanCycle = NO;
+    }
+    
+    /*如果需要循环轮播, 则在图片数组首尾两边各自添加首尾元素*/
     if (_isCanCycle) {
 
         NSMutableArray *cycleDatasource = [_arr_images mutableCopy];
         [cycleDatasource insertObject:[_arr_images lastObject] atIndex:0];
         [cycleDatasource addObject:[_arr_images objectAtIndex:0]];
         self.arr_images = cycleDatasource;
+        
         
     }
     
@@ -209,6 +271,7 @@
 
     if (_isCanCycle && _arr_images.count > 1) {
         _scrollView.contentOffset = CGPointMake(contentWidth, 0);
+        self.currentIndex = 1;
     }
     
     //添加点击事件
@@ -251,20 +314,67 @@
 //4、已经结束拖拽，手指刚离开view的那一刻
 -(void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate{
     
-    if ((self.isCanCycle && _arr_images.count > 3) || (!self.isCanCycle &&_arr_images.count > 2)) {
-        [self createTimer];
+    if ((_isCanCycle && _arr_images.count > 3) || (!_isCanCycle &&_arr_images.count > 2)) {
+        //[self createTimer];
     }
 
 }
 
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView{
+    
+    CGFloat target_x = scrollView.contentOffset.x;
+    NSLog(@"target_x:%f",target_x);
+    CGFloat item_width = CGRectGetWidth(scrollView.frame);
+    
+   
+    /* 循环滚动时候的边缘判断 */
+    if (self.isCanCycle && _arr_images.count > 3) {
+        /* 当可以循环滚动时候，滑动到数组倒数第二个的时候，让scrollView滚动到数组第一个位置 */
+        
+        if (target_x >= item_width * (_arr_images.count - 1)) {
+            target_x = item_width;
+            _scrollView.contentOffset = CGPointMake(target_x, 0);
+        }else if (target_x <= 0){
+            
+            /* 当循环滚动的时候，滚动到数组第一个的时候，让scrollView设置到数组倒数第二个的位置 */
+            target_x = item_width * (_arr_images.count -2);
+            _scrollView.contentOffset = CGPointMake(target_x, 0);
+        
+        }
+    }
+    /* 当滑动到页面的一半的时候视为下一张图片, 这里以当前滑动位置是否超过图片一半来判断当前页 */
+    _currentIndex = (target_x + item_width/2) / item_width;
+   
+    
+    if (_isCanCycle && _arr_images.count > 3) {
+        
+        if (_currentIndex >= _arr_images.count - 1) {
+            _currentIndex = 1;
+        }else if(_currentIndex < 1){
+            _currentIndex = _arr_images.count - 2;
+            NSLog(@"_currentIndex = %ld",_currentIndex);
+        }
+    }
+    
+    if (_pageControl) {
+        if (_isCanCycle && _arr_images.count > 3) {
+            _pageControl.currentPage = _currentIndex - 1;
+        }else{
+            _pageControl.currentPage = _currentIndex;
+        }
+        
+    }
+    
+}
 
 
 #pragma mark - UITapGestureRecognizerSelector
 
 - (void)singleTapGestureRecognizer:(UITapGestureRecognizer *)tapGesture {
     
-    NSInteger page = (NSInteger)(_scrollView.contentOffset.x / CGRectGetWidth(_scrollView.frame));
-    
+    if (self.selectedBlock) {
+        self.selectedBlock(_currentIndex);
+    }
    
 }
 
