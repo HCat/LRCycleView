@@ -27,7 +27,9 @@ typedef void(^LRCyCleScrollBlock)(NSInteger selectedIndex);
 
 @interface LRCyCleScrollView : UIView
 
-/*是否可以循环,默认是YES, 如果图片只有一张的时候,设置isCanCycle无效,这时候是不能进行循环滚动的*/
+/*是否可以循环,默认是YES, 如果图片只有一张的时候,设置isCanCycle无效,这时候是不能进行循环滚动的
+  初始化后变换isCanCycle，需要手动调用reloadData来刷新轮播视图
+ */
 @property (nonatomic,assign) BOOL isCanCycle;
 
 /*自动轮播时间，默认是为1秒*/
@@ -39,8 +41,8 @@ typedef void(^LRCyCleScrollBlock)(NSInteger selectedIndex);
 /*加载图片时候的默认背景图*/
 @property (nonatomic,strong)UIImage *image_placeHolder;
 
-/* 图片数组 */
-@property (nonatomic,copy) NSArray *arr_images; 
+/* 图片数组 ，如果单独赋值给arr_images并不会触发reloadData, 需要手动调用reloadData来刷新轮播视图*/
+@property (nonatomic,copy) NSArray *arr_sourceImages;
 
 /* 选中之后的所做的操作 */
 @property (nonatomic,copy) LRCyCleScrollBlock selectedBlock;
