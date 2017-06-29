@@ -43,6 +43,7 @@
 		CE575AF21EFA77F40062EAFC /* img_2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = CE575AF11EFA77F40062EAFC /* img_2.jpg */; };
 		CE575AF41EFA78130062EAFC /* img_3.jpg in Resources */ = {isa = PBXBuildFile; fileRef = CE575AF31EFA78130062EAFC /* img_3.jpg */; };
 		CE575AF61EFA78280062EAFC /* img_4.jpg in Resources */ = {isa = PBXBuildFile; fileRef = CE575AF51EFA78280062EAFC /* img_4.jpg */; };
+		CE94950E1F04CC6E00837D53 /* LRCycleCollectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = CE94950D1F04CC6E00837D53 /* LRCycleCollectionView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -111,6 +112,8 @@
 		CE575AF11EFA77F40062EAFC /* img_2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = img_2.jpg; sourceTree = "<group>"; };
 		CE575AF31EFA78130062EAFC /* img_3.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = img_3.jpg; sourceTree = "<group>"; };
 		CE575AF51EFA78280062EAFC /* img_4.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = img_4.jpg; sourceTree = "<group>"; };
+		CE94950C1F04CC6E00837D53 /* LRCycleCollectionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LRCycleCollectionView.h; sourceTree = "<group>"; };
+		CE94950D1F04CC6E00837D53 /* LRCycleCollectionView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LRCycleCollectionView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -187,6 +190,8 @@
 				CE575AAB1EFA47230062EAFC /* NSTimer+UnRetain.m */,
 				CE56D0B31EF8ECF9005F2CB9 /* LRCyCleScrollView.h */,
 				CE56D0B41EF8ECF9005F2CB9 /* LRCyCleScrollView.m */,
+				CE94950C1F04CC6E00837D53 /* LRCycleCollectionView.h */,
+				CE94950D1F04CC6E00837D53 /* LRCycleCollectionView.m */,
 			);
 			path = LRCycleView;
 			sourceTree = "<group>";
@@ -345,6 +350,7 @@
 				CE575ADE1EFA72FD0062EAFC /* SDWebImageCompat.m in Sources */,
 				CE575AE71EFA72FD0062EAFC /* UIImage+WebP.m in Sources */,
 				CE56D0A31EF8CE20005F2CB9 /* ViewController.m in Sources */,
+				CE94950E1F04CC6E00837D53 /* LRCycleCollectionView.m in Sources */,
 				CE575AE81EFA72FD0062EAFC /* UIImageView+HighlightedWebCache.m in Sources */,
 				CE56D0A01EF8CE20005F2CB9 /* AppDelegate.m in Sources */,
 				CE575ADA1EFA72FD0062EAFC /* NSData+ImageContentType.m in Sources */,

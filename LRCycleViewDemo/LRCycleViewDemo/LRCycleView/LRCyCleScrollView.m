@@ -10,7 +10,7 @@
 #import "NSTimer+UnRetain.h"
 #import "UIImageView+WebCache.h"
 
-#define DEFINEAUTOPLAYTIME 3.0f
+#define DEFINEAUTOPLAYTIME 2.0f
 
 
 @interface LRCyCleScrollView ()<UIScrollViewDelegate>
@@ -21,10 +21,7 @@
 
 @property (nonatomic,assign) BOOL scrollViewBounces;
 
-@property (nonatomic,assign) NSUInteger layoutCount;    //layout调用次数,用于调试用的
-
 @property (nonatomic,assign) NSInteger currentIndex;   //当前索引页
-@property (nonatomic,assign) NSInteger count;          //图片数据的数目
 
 @property (nonatomic,copy) NSArray *arr_images;
 
@@ -32,6 +29,7 @@
 
 
 @implementation LRCyCleScrollView
+
 
 #pragma mark - init
 
@@ -44,8 +42,6 @@
         self.isCanCycle = YES;
         self.autoPlayTimeInterval = DEFINEAUTOPLAYTIME;
         
-        
-        self.layoutCount = 0;
     }
     return self;
 }
@@ -58,7 +54,6 @@
         self.isCanCycle = YES;
         self.autoPlayTimeInterval = DEFINEAUTOPLAYTIME;
        
-        self.layoutCount = 0;
     }
     return self;
 }
@@ -68,7 +63,6 @@
         self.isCanCycle = YES;
         self.autoPlayTimeInterval = DEFINEAUTOPLAYTIME;
     
-        self.layoutCount = 0;
     }
     return self;
 }
@@ -78,14 +72,6 @@
 - (void)reloadData{
     [self setNeedsLayout];
 }
-
-- (void)setCurrentPage:(NSInteger)currentPage animated:(BOOL)animated{
-
-
-
-}
-
-
 
 
 #pragma mark - set && get 
@@ -101,11 +87,13 @@
 
 }
 
-#pragma mark -
+#pragma mark - layoutSubviews
 
 - (void)layoutSubviews {
+    
     [super layoutSubviews];
     
+    self.backgroundColor = [UIColor lightGrayColor];
     NSArray *subViews = self.subviews;
     [subViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
     
@@ -167,7 +155,7 @@
 
 }
 
-#pragma mark - 定时器相关
+#pragma mark - NSTimer定时器相关
 
 //初始化定时器
 
@@ -188,9 +176,12 @@
 
 - (void)invalidateTimer{
 
-    [_timer invalidate];
-    self.timer = nil;
+    if (_timer) {
+        [_timer invalidate];
+        self.timer = nil;
 
+    }
+   
 }
 
 - (void)timerAction{
@@ -214,7 +205,7 @@
 
 - (void)loadData{
 
-    NSAssert(_arr_images != nil, @"arr_images must not nil");
+    NSAssert(_arr_sourceImages != nil, @"arr_images must not nil");
     
     if (_arr_images.count == 0) {
         
@@ -288,9 +279,18 @@
         
     }else if ([imageSource isKindOfClass:[NSString class]] || [imageSource isKindOfClass:[NSURL class]]) {
       
+        UIActivityIndicatorView *activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+        [activity startAnimating];
+        activity.center = CGPointMake(CGRectGetWidth(_scrollView.frame) * 0.5, CGRectGetHeight(_scrollView.frame) * 0.5);
+        [activity setHidesWhenStopped:true];
+        [imageView addSubview:activity];
+        
         NSURL *url_image = [imageSource isKindOfClass:[NSString class]] ? [NSURL URLWithString:imageSource] : imageSource;
         
-        [imageView sd_setImageWithURL:url_image placeholderImage:_image_placeHolder];
+        [imageView sd_setImageWithURL:url_image placeholderImage:_image_placeHolder completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
+            [activity stopAnimating];
+            [imageView setImage:image];
+        }];
         
     }
 
@@ -301,9 +301,7 @@
 
 /* 即将要开始拖拽的时候，停止计时器 */
 -(void)scrollViewWillBeginDragging:(UIScrollView *)scrollView{
-    if (_timer) {
-         [self invalidateTimer];
-    }
+   [self invalidateTimer];
 }
 
 /* 当结束拖拽的时候，开始计时器 */
@@ -347,8 +345,7 @@
         }
     }
     
-    // NSLog(@"_currentIndex:%ld",_currentIndex);
-   
+    
     if (_pageControl) {
         
         if (_isCanCycle && _arr_images.count > 3) {
@@ -364,7 +361,6 @@
     }
     
 }
-
 
 #pragma mark - UITapGestureRecognizerSelector
 
@@ -387,9 +383,17 @@
             }
             
         }
-        
     
-   
+}
+
+- (void)dealloc{
+
+    NSLog(@"LRCyCleScrollView dealloc");
+    if (_timer) {
+        [_timer invalidate];
+        _timer = nil;
+    }
+
 }
 
 
