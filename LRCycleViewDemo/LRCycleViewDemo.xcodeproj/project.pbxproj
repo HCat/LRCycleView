@@ -44,6 +44,7 @@
 		CE575AF41EFA78130062EAFC /* img_3.jpg in Resources */ = {isa = PBXBuildFile; fileRef = CE575AF31EFA78130062EAFC /* img_3.jpg */; };
 		CE575AF61EFA78280062EAFC /* img_4.jpg in Resources */ = {isa = PBXBuildFile; fileRef = CE575AF51EFA78280062EAFC /* img_4.jpg */; };
 		CE94950E1F04CC6E00837D53 /* LRCycleCollectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = CE94950D1F04CC6E00837D53 /* LRCycleCollectionView.m */; };
+		CED514C11F06307000BE3DCB /* LRCycleCollectionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CED514C01F06307000BE3DCB /* LRCycleCollectionCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -114,6 +115,8 @@
 		CE575AF51EFA78280062EAFC /* img_4.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = img_4.jpg; sourceTree = "<group>"; };
 		CE94950C1F04CC6E00837D53 /* LRCycleCollectionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LRCycleCollectionView.h; sourceTree = "<group>"; };
 		CE94950D1F04CC6E00837D53 /* LRCycleCollectionView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LRCycleCollectionView.m; sourceTree = "<group>"; };
+		CED514BF1F06307000BE3DCB /* LRCycleCollectionCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LRCycleCollectionCell.h; sourceTree = "<group>"; };
+		CED514C01F06307000BE3DCB /* LRCycleCollectionCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LRCycleCollectionCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -190,6 +193,8 @@
 				CE575AAB1EFA47230062EAFC /* NSTimer+UnRetain.m */,
 				CE56D0B31EF8ECF9005F2CB9 /* LRCyCleScrollView.h */,
 				CE56D0B41EF8ECF9005F2CB9 /* LRCyCleScrollView.m */,
+				CED514BF1F06307000BE3DCB /* LRCycleCollectionCell.h */,
+				CED514C01F06307000BE3DCB /* LRCycleCollectionCell.m */,
 				CE94950C1F04CC6E00837D53 /* LRCycleCollectionView.h */,
 				CE94950D1F04CC6E00837D53 /* LRCycleCollectionView.m */,
 			);
@@ -343,6 +348,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CED514C11F06307000BE3DCB /* LRCycleCollectionCell.m in Sources */,
 				CE575ADF1EFA72FD0062EAFC /* SDWebImageDecoder.m in Sources */,
 				CE575AE21EFA72FD0062EAFC /* SDWebImageManager.m in Sources */,
 				CE575AEA1EFA72FD0062EAFC /* UIView+WebCache.m in Sources */,

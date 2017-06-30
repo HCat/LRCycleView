@@ -9,14 +9,16 @@
 #import "LRCycleCollectionView.h"
 #import "NSTimer+UnRetain.h"
 #import "UIImageView+WebCache.h"
+#import "LRCycleCollectionCell.h"
 
 #define DEFINEAUTOPLAYTIME 2.0f
+#define kCollectionViewCellID @"kCollectionViewCellID"
 
 
 @interface LRCycleCollectionView ()<UICollectionViewDataSource, UICollectionViewDelegate>
 
-@property (nonatomic, weak) UICollectionView *collectionView;
-@property (nonatomic, weak) UICollectionViewFlowLayout *flowLayout;
+@property (nonatomic, strong) UICollectionView *collectionView;
+@property (nonatomic, strong) UICollectionViewFlowLayout *flowLayout;
 @property (nonatomic,strong) UIPageControl * pageControl;
 
 @property (nonatomic,strong) NSTimer *timer;
@@ -106,6 +108,8 @@
         self.arr_images = _arr_sourceImages;
     }
     
+    [_collectionView reloadData];
+    
 }
 
 
@@ -113,10 +117,13 @@
 
     _autoPlayTimeInterval = autoPlayTimeInterval;
     
-    if
-
-
-
+    [self invalidateTimer];
+    
+    if(_autoPlayTimeInterval > 0){
+        
+        [self createTimer];
+        
+    }
 
 }
 
@@ -143,17 +150,32 @@
     [self createCollectionView];
     [self createPageControl];
     
+    [self setAutoPlayTimeInterval:_autoPlayTimeInterval];
+    
 }
 
 #pragma mark - 初始化collectionView
 
-
 - (void)createCollectionView{
     
+    CGFloat contentWight = CGRectGetWidth(self.frame);
+    CGFloat contentheight = CGRectGetHeight(self.frame);
     
+    _flowLayout = [UICollectionViewFlowLayout new];
+    _flowLayout.itemSize = CGSizeMake(contentWight, contentheight);
+    _flowLayout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
+    _flowLayout.minimumLineSpacing = 0;
+    _flowLayout.sectionInset = UIEdgeInsetsMake(0, 0, 0, 0);
     
-    
-    
+    self.collectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.frame), CGRectGetHeight(self.frame)) collectionViewLayout:_flowLayout];
+    _collectionView.backgroundColor = [UIColor whiteColor];
+    _collectionView.delegate = self;
+    _collectionView.dataSource = self;
+    _collectionView.scrollsToTop = NO;
+    _collectionView.showsVerticalScrollIndicator = NO;
+    _collectionView.showsHorizontalScrollIndicator = NO;
+    [_collectionView registerClass:[LRCycleCollectionCell class] forCellWithReuseIdentifier:kCollectionViewCellID];
+    [self addSubview:_collectionView];
     
 }
 
@@ -162,7 +184,7 @@
 - (void)createPageControl{
     
     _pageControl = [[UIPageControl alloc] initWithFrame:CGRectMake(0, 0, 13 *_arr_images.count, 25)];
-    _pageControl.center = CGPointMake(CGRectGetWidth(_scrollView.frame)/2, CGRectGetMaxY(_scrollView.frame) - CGRectGetHeight(_pageControl.frame)/2);
+    _pageControl.center = CGPointMake(CGRectGetWidth(self.frame)/2, CGRectGetMaxY(self.frame) - CGRectGetHeight(_pageControl.frame)/2);
     _pageControl.userInteractionEnabled = NO;
     _pageControl.currentPageIndicatorTintColor = [UIColor redColor];
     _pageControl.pageIndicatorTintColor = [UIColor whiteColor];
@@ -209,6 +231,94 @@
    
     
 }
+
+
+#pragma mark - UICollectionViewDataSource
+
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
+{
+ 
+    if (_arr_images) {
+        return _arr_images.count;
+    }else{
+        return 1;
+    }
+}
+
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    LRCycleCollectionCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:kCollectionViewCellID forIndexPath:indexPath];
+    
+    if (self.arr_images && self.arr_images.count > 0) {
+        
+        id t_image = self.arr_images[indexPath.row];
+        cell.image = t_image;
+        
+    }else{
+    
+    
+    }
+    
+    
+    
+    
+    
+   
+    
+    
+    
+    
+    
+  
+    
+    return cell;
+}
+
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (_isCanCycle && _arr_images.count > 3) {
+        
+        if (self.selectedBlock) {
+           self.selectedBlock(indexPath.row - 1);
+        }
+        
+    }else{
+        
+        if (self.selectedBlock) {
+            self.selectedBlock(indexPath.row);
+        }
+        
+    }
+}
+
+
+#pragma mark - UIScrollViewDelegate
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+
+    
+    
+    
+    
+    
+    
+    
+    
+}
+
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
+{
+    [self invalidateTimer];
+}
+
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
+{
+    if ((_isCanCycle && _arr_images.count > 3) || (!_isCanCycle &&_arr_images.count >= 2)) {
+        [self createTimer];
+    }
+}
+
 
 
 

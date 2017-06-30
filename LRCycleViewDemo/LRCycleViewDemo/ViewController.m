@@ -24,8 +24,8 @@
     UIImage *image_1 = [UIImage imageNamed:@"img_0.jpg"];
     UIImage *image_2 = [UIImage imageNamed:@"img_1.jpg"];
     UIImage *image_3 = [UIImage imageNamed:@"img_2.jpg"];
-
-    NSArray *t_arr =[[NSArray alloc] initWithObjects:image_1,image_2,image_3, nil];
+    
+    NSArray *t_arr =[[NSArray alloc] initWithObjects:image_1,image_2,image_3,nil];
     
     self.cycleView = [[LRCyCleScrollView alloc] initWithFrame:CGRectMake(0, 50, [UIScreen mainScreen].bounds.size.width, 250) withImages:t_arr];
     self.cycleView.isCanCycle = NO;
