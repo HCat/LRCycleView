@@ -255,22 +255,9 @@
         cell.image = t_image;
         
     }else{
-    
-    
+         cell.image = _image_null;
     }
-    
-    
-    
-    
-    
-   
-    
-    
-    
-    
-    
-  
-    
+
     return cell;
 }
 
@@ -294,18 +281,6 @@
 
 #pragma mark - UIScrollViewDelegate
 
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView
-{
-
-    
-    
-    
-    
-    
-    
-    
-    
-}
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
 {

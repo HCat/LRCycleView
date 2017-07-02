@@ -8,6 +8,7 @@
 
 #import "ViewController.h"
 #import "LRCyCleScrollView.h"
+#import "LRCycleCollectionView.h"
 #import "SDWebImageManager.h"
 
 @interface ViewController ()
@@ -33,6 +34,15 @@
         NSLog(@"selectedIndex:%ld",selectedIndex);
     };
     [self.view addSubview:self.cycleView];
+    
+    
+    LRCycleCollectionView * collection = [[LRCycleCollectionView alloc] initWithFrame:CGRectMake(0, 350, [UIScreen mainScreen].bounds.size.width, 250) withImages:t_arr];
+    collection.isCanCycle = NO;
+    collection.selectedBlock = ^(NSInteger selectedIndex) {
+        NSLog(@"selectedIndex:%ld",selectedIndex);
+    };
+    [self.view addSubview:collection];
+    
     
 }
 
