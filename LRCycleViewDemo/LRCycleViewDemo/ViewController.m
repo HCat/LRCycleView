@@ -66,7 +66,6 @@
     NSMutableArray *t_arr = [NSMutableArray array];
     for (int i = 0; i < 20; i++) {
         int y = (arc4random() % 5) + 0;
-        NSLog(@"%d",y);
         NSString *t_str = [NSString stringWithFormat:@"img_%d.jpg",y];
         UIImage *image = [UIImage imageNamed:t_str];
         [t_arr addObject:image];
