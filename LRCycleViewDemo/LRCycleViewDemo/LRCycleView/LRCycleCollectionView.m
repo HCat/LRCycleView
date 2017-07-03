@@ -19,6 +19,7 @@
 
 @property (nonatomic, strong) UICollectionView *collectionView;
 @property (nonatomic, strong) UICollectionViewFlowLayout *flowLayout;
+
 @property (nonatomic,strong) UIPageControl * pageControl;
 
 @property (nonatomic,strong) NSTimer *timer;
@@ -39,7 +40,7 @@
     
     if (self) {
         _arr_sourceImages = [imagesArray copy];
-        self.isCanCycle = YES;
+        _isCanCycle = YES;
         _autoPlayTimeInterval = DEFINEAUTOPLAYTIME;
         
     }
@@ -72,15 +73,13 @@
 #pragma mark - set && get
 
 - (void)setIsCanCycle:(BOOL)isCanCycle{
-    
-    NSAssert(_arr_sourceImages != nil, @"arr_images must not nil");
 
-    if (_arr_sourceImages.count == 1) {
+    if (_arr_sourceImages.count == 1 || !_arr_sourceImages) {
         _isCanCycle = NO;
     }else{
         _isCanCycle = isCanCycle;
     }
-    
+
     self.arr_sourceImages = _arr_sourceImages;
 
 }
@@ -105,8 +104,27 @@
         }
     
     }else{
+        
         self.arr_images = _arr_sourceImages;
+        
     }
+    
+    /* 设置pageControl显示 */
+    _pageControl.numberOfPages = _arr_sourceImages.count;
+    _pageControl.currentPage = 0;
+    self.currentIndex = 0;
+    
+    if (_isCanCycle) {
+        self.collectionView.bounces = YES;
+        self.currentIndex = 1;
+    }else{
+        self.collectionView.bounces = NO;
+        
+    }
+    
+    [_collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:self.currentIndex inSection:0] atScrollPosition:UICollectionViewScrollPositionNone animated:NO];
+    
+    [self setAutoPlayTimeInterval:_autoPlayTimeInterval];
     
     [_collectionView reloadData];
     
@@ -136,9 +154,7 @@
     self.backgroundColor = [UIColor lightGrayColor];
     NSArray *subViews = self.subviews;
     [subViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-    
-    [self invalidateTimer];
-    
+
     [self initialize];
     
 }
@@ -150,7 +166,7 @@
     [self createCollectionView];
     [self createPageControl];
     
-    [self setAutoPlayTimeInterval:_autoPlayTimeInterval];
+    [self setArr_sourceImages:_arr_sourceImages];
     
 }
 
@@ -168,7 +184,8 @@
     _flowLayout.sectionInset = UIEdgeInsetsMake(0, 0, 0, 0);
     
     self.collectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.frame), CGRectGetHeight(self.frame)) collectionViewLayout:_flowLayout];
-    _collectionView.backgroundColor = [UIColor whiteColor];
+    _collectionView.backgroundColor = [UIColor clearColor];
+    _collectionView.pagingEnabled = YES;
     _collectionView.delegate = self;
     _collectionView.dataSource = self;
     _collectionView.scrollsToTop = NO;
@@ -184,7 +201,7 @@
 - (void)createPageControl{
     
     _pageControl = [[UIPageControl alloc] initWithFrame:CGRectMake(0, 0, 13 *_arr_images.count, 25)];
-    _pageControl.center = CGPointMake(CGRectGetWidth(self.frame)/2, CGRectGetMaxY(self.frame) - CGRectGetHeight(_pageControl.frame)/2);
+    _pageControl.center = CGPointMake(CGRectGetWidth(self.frame)/2, CGRectGetHeight(self.frame) - CGRectGetHeight(_pageControl.frame)/2);
     _pageControl.userInteractionEnabled = NO;
     _pageControl.currentPageIndicatorTintColor = [UIColor redColor];
     _pageControl.pageIndicatorTintColor = [UIColor whiteColor];
@@ -226,9 +243,17 @@
 
 - (void)timerAction{
     
-   
+    if (!_isCanCycle) {
+        if (_currentIndex == _arr_images.count - 1) {
+            _currentIndex = 0;
+            [_collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:_currentIndex inSection:0] atScrollPosition:UICollectionViewScrollPositionNone animated:NO];
+            return;
+        }
+    }
     
-   
+    _currentIndex ++;
+    
+    [_collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:_currentIndex inSection:0] atScrollPosition:UICollectionViewScrollPositionNone animated:YES];
     
 }
 
@@ -282,19 +307,74 @@
 #pragma mark - UIScrollViewDelegate
 
 
-- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
-{
-    [self invalidateTimer];
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView{
+    
+    CGFloat target_x = scrollView.contentOffset.x;
+    CGFloat item_width = CGRectGetWidth(scrollView.frame);
+    
+    
+    /* 当滑动到页面的一半的时候视为下一张图片, 这里以当前滑动位置是否超过图片一半来判断当前页 */
+    _currentIndex = (target_x + item_width/2) / item_width;
+    
+    /* 循环滚动时候的边缘判断 */
+    if (_isCanCycle && _arr_images.count > 3) {
+
+        if (target_x >= item_width * (_arr_images.count - 1)) {
+            
+            /* 当可以循环滚动时候，滑动到数组最后一张的时候，让scrollView置换到数组第1张位置 */
+           
+            _currentIndex = 1;
+            [_collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:_currentIndex inSection:0] atScrollPosition:UICollectionViewScrollPositionNone animated:NO];
+            
+        }else if (target_x <= 0){
+            
+            /* 当循环滚动的时候，滚动到数组第0张的时候，让scrollView设置到数组倒数第2张的位置 */
+            _currentIndex = _arr_images.count - 2;
+            [_collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:_currentIndex inSection:0] atScrollPosition:UICollectionViewScrollPositionNone animated:NO];
+            
+        }
+    }
+    
+    
+    if (_pageControl) {
+        
+        if (_isCanCycle && _arr_images.count > 3) {
+            
+            _pageControl.currentPage = _currentIndex - 1;
+            
+        }else{
+            
+            _pageControl.currentPage = _currentIndex;
+            
+        }
+        
+    }
+    
 }
 
-- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
-{
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView{
+    
+    [self invalidateTimer];
+    
+}
+
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate{
+    
     if ((_isCanCycle && _arr_images.count > 3) || (!_isCanCycle &&_arr_images.count >= 2)) {
         [self createTimer];
     }
+    
 }
 
-
-
+- (void)dealloc{
+    
+    NSLog(@"LRCycleCollectionView dealloc");
+    
+    if (_timer) {
+        [_timer invalidate];
+        _timer = nil;
+    }
+    
+}
 
 @end

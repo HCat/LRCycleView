@@ -13,7 +13,8 @@
 
 @interface ViewController ()
 
-@property (nonatomic,strong) LRCyCleScrollView *cycleView;
+@property (nonatomic,strong) LRCyCleScrollView *cycleScrollView;
+@property (nonatomic,strong) LRCycleCollectionView *cycleCollectionView;
 
 @end
 
@@ -28,20 +29,20 @@
     
     NSArray *t_arr =[[NSArray alloc] initWithObjects:image_1,image_2,image_3,nil];
     
-    self.cycleView = [[LRCyCleScrollView alloc] initWithFrame:CGRectMake(0, 50, [UIScreen mainScreen].bounds.size.width, 250) withImages:t_arr];
-    self.cycleView.isCanCycle = NO;
-    self.cycleView.selectedBlock = ^(NSInteger selectedIndex) {
+    self.cycleScrollView = [[LRCyCleScrollView alloc] initWithFrame:CGRectMake(0, 50, [UIScreen mainScreen].bounds.size.width, 200) withImages:t_arr];
+    self.cycleScrollView.isCanCycle = NO;
+    self.cycleScrollView.selectedBlock = ^(NSInteger selectedIndex) {
         NSLog(@"selectedIndex:%ld",selectedIndex);
     };
-    [self.view addSubview:self.cycleView];
+    [self.view addSubview:self.cycleScrollView];
     
     
-    LRCycleCollectionView * collection = [[LRCycleCollectionView alloc] initWithFrame:CGRectMake(0, 350, [UIScreen mainScreen].bounds.size.width, 250) withImages:t_arr];
-    collection.isCanCycle = NO;
-    collection.selectedBlock = ^(NSInteger selectedIndex) {
+    self.cycleCollectionView = [[LRCycleCollectionView alloc] initWithFrame:CGRectMake(0, 300, [UIScreen mainScreen].bounds.size.width, 200) withImages:t_arr];
+    self.cycleCollectionView.isCanCycle = NO;
+    self.cycleCollectionView.selectedBlock = ^(NSInteger selectedIndex) {
         NSLog(@"selectedIndex:%ld",selectedIndex);
     };
-    [self.view addSubview:collection];
+    [self.view addSubview:self.cycleCollectionView];
     
     
 }
@@ -55,11 +56,25 @@
     NSString *t_str5 = @"http://img1.juimg.com/170412/330779-1F4120S0078.jpg";
     
     NSArray *t_arr2 =[[NSArray alloc] initWithObjects:t_str1,t_str2,t_str3,t_str4,t_str5,nil];
-    self.cycleView.arr_sourceImages = t_arr2;
-    self.cycleView.autoPlayTimeInterval = 3.0f;
-    self.cycleView.isCanCycle = YES;
+    self.cycleScrollView.arr_sourceImages = t_arr2;
+    self.cycleScrollView.autoPlayTimeInterval = 3.0f;
+    self.cycleScrollView.isCanCycle = YES;
+    [self.cycleScrollView reloadData];
     
-    [self.cycleView reloadData];
+  
+
+    NSMutableArray *t_arr = [NSMutableArray array];
+    for (int i = 0; i < 20; i++) {
+        int y = (arc4random() % 5) + 0;
+        NSLog(@"%d",y);
+        NSString *t_str = [NSString stringWithFormat:@"img_%d.jpg",y];
+        UIImage *image = [UIImage imageNamed:t_str];
+        [t_arr addObject:image];
+    }
+
+    self.cycleCollectionView.arr_sourceImages = t_arr;
+    self.cycleCollectionView.autoPlayTimeInterval = 3.0f;
+    self.cycleCollectionView.isCanCycle = YES;
 
 }
 

@@ -127,7 +127,6 @@
 
 #pragma mark - 初始化ScrollView
 
-
 - (void)createScrollView{
     
     _scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.frame), CGRectGetHeight(self.frame))];
