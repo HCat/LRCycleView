@@ -29,6 +29,7 @@
     
     NSArray *t_arr =[[NSArray alloc] initWithObjects:image_1,image_2,image_3,nil];
     
+
     self.cycleScrollView = [[LRCyCleScrollView alloc] initWithFrame:CGRectMake(0, 50, [UIScreen mainScreen].bounds.size.width, 200) withImages:t_arr];
     self.cycleScrollView.isCanCycle = NO;
     self.cycleScrollView.selectedBlock = ^(NSInteger selectedIndex) {
