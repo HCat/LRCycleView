@@ -4,6 +4,7 @@
 
 ### 展示：
 
+![image](https://github.com/HCat/LRCycleView/blob/master/screenshots/LRCycleView.gif "null")
 
 ### 说明：
 LRCycleView是图片轮播图控件文件,包含了两种实现轮播方式：
